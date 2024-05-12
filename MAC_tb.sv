@@ -11,14 +11,51 @@ module MAC_tb();
         forever #5 clk = ~clk;
     end
 
-    // initial begin
-    //     // $dumpfile("MAC_tb.vcd");
-    //     // $dumpvars(0, MAC_tb);
+    initial begin
+        rst = 1;
+        #10
+        rst = 0;
 
-    //     #10 rst = 1;
-    //     #10 rst = 0;
+        A = 16'd1;
+        B = 16'd2;
 
-    //     #10 en = 1;
-    //     #10 en = 0;
+        en = 0;
+        #10
+        en = 1;
+        #10
+        en = 0;
+
+        A = 16'd3;
+        B = 16'd2;
+
+        en = 0;
+        #10
+        en = 1;
+        #10
+        en = 0;
+
+        A = 16'd5;
+        B = 16'd5;
+
+        en = 0;
+        #10
+        en = 1;
+        #10
+        en = 0;
+
+        rst = 1;
+        #10
+        rst = 0;
+
+        A = 16'd5;
+        B = 16'd8;
+
+        en = 0;
+        #10
+        en = 1;
+        #10
+        en = 0;
+
+    end
 
 endmodule: MAC_tb
