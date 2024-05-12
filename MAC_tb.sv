@@ -1,61 +1,76 @@
-module MAC_tb();
+    module MAC_tb();
 
-    logic clk, rst, en;
-    logic [15:0] A, B;
-    logic [15:0] out;
+        parameter CLK_PERIOD = 10;
+        parameter RESET_DURATION = 10;
+        parameter RUN_DURATION = 10;
 
-    MAC dut(.clk(clk), .rst(rst), .en(en), .A(A), .B(B), .out(out));
+        // define signals
+        logic clk, rst, en;
+        logic signed [15:0] A, B;
+        logic signed [31:0] out;
 
-    initial begin
-        clk = 0;
-        forever #5 clk = ~clk;
-    end
+        // instantiate the DUT
+        MAC dut (.clk(clk), .rst(rst), .en(en), .A(A), .B(B), .out(out));
 
-    initial begin
-        rst = 1;
-        #10
-        rst = 0;
+        // generate clock
+        initial begin
+            clk = 0;
+            forever #(CLK_PERIOD/2) clk = ~clk;
+        end
 
-        A = 16'd1;
-        B = 16'd2;
+        task apply_reset;
+            $display("Applying reset");
 
-        en = 0;
-        #10
-        en = 1;
-        #10
-        en = 0;
+            rst = 1;    
+            #RESET_DURATION
+            rst = 0;
+        endtask: apply_reset
 
-        A = 16'd3;
-        B = 16'd2;
+        task check_output(input [31:0] expected_value);
+            if (out !== expected_value) begin
+                $display("Test failed: Expected %d, got %d at time %t", expected_value, out, $time);
+            end else begin
+                $display("Test passed: Expected %d, got %d at time %t", expected_value, out, $time);
+            end
+        endtask
 
-        en = 0;
-        #10
-        en = 1;
-        #10
-        en = 0;
+        task run_mac(input logic [15:0] in_A, input logic [15:0] in_B, input logic [15:0] expected_value);
+            A = in_A;
+            B = in_B;
 
-        A = 16'd5;
-        B = 16'd5;
+            en = 0;
+            #RUN_DURATION
+            en = 1;
+            #RUN_DURATION
+            en = 0;
+            #RUN_DURATION
 
-        en = 0;
-        #10
-        en = 1;
-        #10
-        en = 0;
+            check_output(expected_value);
+        endtask: run_mac
 
-        rst = 1;
-        #10
-        rst = 0;
 
-        A = 16'd5;
-        B = 16'd8;
+        initial begin
+            apply_reset();
+            check_output(16'd0);
+            run_mac(16'd1, 16'd2, 32'd2);
+            run_mac(16'd3, 16'd2, 32'd8);
+            run_mac(16'd5, 16'd5, 32'd33);
 
-        en = 0;
-        #10
-        en = 1;
-        #10
-        en = 0;
+            apply_reset();
+            check_output(16'd0);
+            run_mac(16'd5, 16'd8, 32'd40);
+            run_mac(16'd2, 16'd3, 32'd46);
+            run_mac(16'd4, -16'd3, 32'd34);
+            run_mac(-16'd2, -16'd2, 32'd38);
 
-    end
+            apply_reset();
+            check_output(16'd0);
+            run_mac(16'd1, -16'd1, -32'd1);
+            run_mac(16'd0, 16'd5, -32'd1);
+            run_mac(16'd4, -16'd5, -32'd21);
+            run_mac(16'd10, 16'd5, 32'd29);
 
-endmodule: MAC_tb
+            $finish;
+        end
+
+    endmodule: MAC_tb

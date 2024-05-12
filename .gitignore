@@ -2,3 +2,6 @@ work/
 *.mpf
 *.wlf
 *.mti
+*.vcd
+*.ini
+transcript
