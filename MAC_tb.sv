@@ -11,9 +11,13 @@ module MAC_tb();
     logic clk, rst, en;
     logic signed [31:0] A, B;
     logic signed [31:0] out;
+    logic ovr;
+
+    localparam Q = 10;
+    localparam N = 32;
 
     // instantiate the DUT
-    MAC dut (.clk(clk), .rst(rst), .en(en), .A(A), .B(B), .out(out));
+    MAC #(Q, N) dut (.clk(clk), .rst(rst), .en(en), .A(A), .B(B), .out(out), .ovr(ovr));
 
     // generate clock
     initial begin
