@@ -16,8 +16,18 @@ module MAC # (
     logic signed [N-1:0] acc_sum;
     logic signed [N-1:0] product;
 
-    qmult #(Q, N) mult(A, B, product, ovr);
-    qadd #(Q, N) add(out, product, acc_sum);
+    qmult #(Q, N) mult(
+        .i_multiplicand(A),
+        .i_multiplier(B),
+        .o_result(product),
+        .ovr(ovr)
+    );
+
+    qadd #(Q, N) add(
+        .a(out),
+        .b(product),
+        .c(acc_sum)
+    );
 
     always_ff @ (posedge clk or posedge rst) begin
         if (rst) begin
