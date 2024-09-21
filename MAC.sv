@@ -16,24 +16,24 @@ module MAC # (
     logic signed [N-1:0] acc_sum;
     logic signed [N-1:0] product;
 
-    qmult #(Q, N) mult(
-        .i_multiplicand(A),
-        .i_multiplier(B),
-        .o_result(product),
-        .ovr(ovr)
-    );
+    // qmult #(Q, N) mult(
+    //     .i_multiplicand(A),
+    //     .i_multiplier(B),
+    //     .o_result(product),
+    //     .ovr(ovr)
+    // );
 
-    qadd #(Q, N) add(
-        .a(out),
-        .b(product),
-        .c(acc_sum)
-    );
+    // qadd #(Q, N) add(
+    //     .a(out),
+    //     .b(product),
+    //     .c(acc_sum)
+    // );
 
     always_ff @ (posedge clk or posedge rst) begin
         if (rst) begin
             out <= 32'sd0;
         end else begin
-            out <= en ? acc_sum : out;
+            out <= en ? out + A*B : out;
         end
     end
 

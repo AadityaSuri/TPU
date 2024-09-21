@@ -25,9 +25,14 @@ module processing_element #(
     );
 
     always_ff @ (posedge clk or posedge rst) begin
-
-        x_out <= en ? x_in : x_out;
-        y_out <= en ? y_in : y_out;
+        if (rst) begin
+            x_out <= 32'sd0;
+            y_out <= 32'sd0;
+            // $display("Resetting");
+        end else begin
+            x_out <= en ? x_in : x_out;
+            y_out <= en ? y_in : y_out;
+        end
     end
 
 endmodule: processing_element
