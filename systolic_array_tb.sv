@@ -6,7 +6,7 @@ module systolic_array_tb();
     parameter RESET_DURATION = 10;
     parameter RUN_DURATION = 10;
 
-    localparam Q = 10;
+    localparam Q = 0;
     localparam N = 32;
     localparam M = 6;
 

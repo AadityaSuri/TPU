@@ -44,9 +44,9 @@ module PE_tb();
 
     task check_output(input signed [N-1:0] expected_value);
         if (acc_sum !== expected_value) begin
-            $display("Test failed: Expected %d, got %d at time %t", expected_value, acc_sum, $time);
+            $display("Test failed: Expected %d, got %d at time %t for acc_sum", expected_value, acc_sum, $time);
         end else begin
-            $display("Test passed: Expected %d, got %d at time %t", expected_value, acc_sum, $time);
+            $display("Test passed: Expected %d, got %d at time %t for acc_sum", expected_value, acc_sum, $time);
         end
     endtask
 
@@ -63,11 +63,11 @@ module PE_tb();
         check_output(expected_value);
 
         if (x_out !== x_in_) begin
-            $display("Test failed: Expected %d, got %d at time %t", x_in_, x_out, $time);
+            $display("Test failed: Expected %d, got %d at time %t for x_out", x_in_, x_out, $time);
         end 
 
         if (y_out !== y_in_) begin
-            $display("Test failed: Expected %d, got %d at time %t", y_in_, y_out, $time);
+            $display("Test failed: Expected %d, got %d at time %t for y_out", y_in_, y_out, $time);
         end
     endtask
 
