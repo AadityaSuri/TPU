@@ -11,7 +11,8 @@ module systolic_array #(
     input logic signed [N-1:0] y_in [0:M-1],  // Input array for the first column (M-1 because we need to have a row for the first column)
     output logic signed [N-1:0] x_out [0:M-1],  // Output array for the first row (M-1 because we need to have a row for the first column)
     output logic signed [N-1:0] y_out [0:M-1],  // Output array for the first column (M-1 because we need to have a row for the first column)
-    output logic signed [N-1:0] acc_sum [0:M-1][0:M-1]  // Output accumulatizon sums (M-1 because we need to have a row for the first column)
+    output logic signed [N-1:0] acc_sum [0:M-1][0:M-1],  // Output accumulatizon sums (M-1 because we need to have a row for the first column)
+    input logic done_read
 );
 
     logic signed [N-1:0] x_internal [0:M-1][0:M-1];

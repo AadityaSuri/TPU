@@ -41,25 +41,24 @@ module systolic_array_tb();
         rst = 0;
     endtask
 
-    task enable;
-        // en = 0;
-        // #RUN_DURATION
-        en = 1;
-        #RUN_DURATION;
-        en = 0;
-        // #RUN_DURATION;
-    endtask 
-
     task drive_matmult_step(
         input signed [N-1:0] matrix_a [0:M-1][0:M-1],
         input signed [N-1:0] matrix_b [0:M-1][0:M-1],
-        input int j
-    );
-        for (int i = 0; i < M; i = i + 1) begin
-            x_in[i] = matrix_a[i][j];
-            y_in[i] = matrix_b[j][i];
+        input int step
+    );  
+        for (int i = 0; i < M; i++) begin
+            if (M-1-step >= 0) begin
+                x_in[i] = matrix_a[i][M-1-step];
+                y_in[i] = matrix_b[M-1-step][i];
+            end else begin
+                x_in[i] = '0;
+                y_in[i] = '0;
+            end
         end
-        enable();
+        en = 1;
+        #RUN_DURATION;
+        en = 0;
+        #RUN_DURATION;
     endtask
 
     logic signed [N-1:0] matrix_a_one [0:M-1][0:M-1] = '{
@@ -99,47 +98,32 @@ module systolic_array_tb();
     };
 
     initial begin
-
-        apply_reset();
-
-
-       for (int i = 0; i < 20; i = i + 1) begin
-            $display("Iteration %d", i);
-            if (M - 1 - i >= 0) begin               
-                drive_matmult_step(matrix_a_one, matrix_b_one, M - 1 - i);
-                if (M - 1 - i == 0) begin
-                    for (int j = 0; j < M; j = j + 1) begin
-                        x_in[j] = 0;
-                        y_in[j] = 0;
-                    end
-                end
-            end else begin
-                enable();
-            end
-        end
-
-
-
+        // Initialize signals
+        en = 0;
+        
+        // Apply reset
         #RUN_DURATION
         apply_reset();
+        #RUN_DURATION;
 
-        for (int i = 0; i < 20; i = i + 1) begin
-            $display("Iteration %d", i);
-            if (M - 1 - i >= 0) begin               
-                drive_matmult_step(matrix_a_two, matrix_b_two, M - 1 - i);
-                if (M - 1 - i == 0) begin
-                    for (int j = 0; j < M; j = j + 1) begin
-                        x_in[j] = 0;
-                        y_in[j] = 0;
-                    end
+        // Drive matrix multiplication steps
+        for (int step = 0; step < 20; step++) begin
+            $display("Step %d", step);
+            drive_matmult_step(matrix_a_one, matrix_b_one, step);
+            // #RUN_DURATION;
+
+            // Print accumulator values for debugging
+            for (int i = 0; i < M; i++) begin
+                for (int j = 0; j < M; j++) begin
+                    $write("%d", acc_sum[i][j]);
                 end
-            end else begin
-                enable();
+                $write("\n");
             end
         end
-    
 
-
+        // Assert done_read to indicate completion
+        
+        $finish;
     end
 
 endmodule: systolic_array_tb
