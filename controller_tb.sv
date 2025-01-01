@@ -1,17 +1,33 @@
-`timescale 1ps/1ps
+`timescale 1 ps / 1 ps
 
-module memsim();
+module controller_tb();
 
-    logic clk;
-    logic [1:0] r0_addr, r1_addr, r2_addr, r3_addr;
-    logic [1:0] c0_addr, c1_addr, c2_addr, c3_addr;
+    parameter CLK_PERIOD = 10;
+    parameter RESET_DURATION = 10;
+    // parameter RUN_DURATION = 10;
+
+    logic clk, rst;
+    logic done, enable_next;
+    logic [1:0] addr;
+
+    // logic [1:0] r0_addr, r1_addr, r2_addr, r3_addr;
+    // logic [1:0] c0_addr, c1_addr, c2_addr, c3_addr;
     logic [31:0] data;
     logic [31:0] r0, r1, r2, r3, c0, c1, c2, c3;
     logic wren;
 
+
+    controller #(.M(4)) dut (
+        .clk(clk),
+        .rst(rst),
+        .done(done),
+        .enable_next(enable_next),
+        .addr(addr)
+    );
+
     ar0 ar0_mem (
         .clock(clk),
-        .address(r0_addr),
+        .address(addr),
         .data(data),
         .wren(wren),
         .q(r0)
@@ -19,7 +35,7 @@ module memsim();
 
     ar1 ar1_mem (
         .clock(clk),
-        .address(r1_addr),
+        .address(addr),
         .data(data),
         .wren(wren),
         .q(r1)
@@ -27,7 +43,7 @@ module memsim();
 
     ar2 ar2_mem (
         .clock(clk),
-        .address(r2_addr),
+        .address(addr),
         .data(data),
         .wren(wren),
         .q(r2)
@@ -35,7 +51,7 @@ module memsim();
 
     ar3 ar3_mem (
         .clock(clk),
-        .address(r3_addr),
+        .address(addr),
         .data(data),
         .wren(wren),
         .q(r3)
@@ -43,7 +59,7 @@ module memsim();
 
     bc0 bc0_mem (
         .clock(clk),
-        .address(c0_addr),
+        .address(addr),
         .data(data),
         .wren(wren),
         .q(c0)
@@ -51,7 +67,7 @@ module memsim();
 
     bc1 bc1_mem (
         .clock(clk),
-        .address(c1_addr),
+        .address(addr),
         .data(data),
         .wren(wren),
         .q(c1)
@@ -59,7 +75,7 @@ module memsim();
 
     bc2 bc2_mem (
         .clock(clk),
-        .address(c2_addr),
+        .address(addr),
         .data(data),
         .wren(wren),
         .q(c2)
@@ -67,15 +83,18 @@ module memsim();
 
     bc3 bc3_mem (
         .clock(clk),
-        .address(c3_addr),
+        .address(addr),
         .data(data),
         .wren(wren),
         .q(c3)
     );
 
+
+
+
     initial begin
         clk = 0;
-        forever #(1) clk = ~clk;
+        forever #(CLK_PERIOD/2) clk = ~clk;
     end
 
     initial begin
@@ -88,53 +107,9 @@ module memsim();
         $readmemh("bc2.memh", bc2_mem.altsyncram_component.m_default.altsyncram_inst.mem_data);
         $readmemh("bc3.memh", bc3_mem.altsyncram_component.m_default.altsyncram_inst.mem_data);
 
-        #2
-        r0_addr = 3;
-        r1_addr = 3;
-        r2_addr = 3;
-        r3_addr = 3;
-        c0_addr = 3;
-        c1_addr = 3;
-        c2_addr = 3;
-        c3_addr = 3;
-        
-        #2
-        r0_addr = 2;
-        r1_addr = 2;
-        r2_addr = 2;
-        r3_addr = 2;
-        c0_addr = 2;
-        c1_addr = 2;
-        c2_addr = 2;
-        c3_addr = 2;
-
-        #2
-        r0_addr = 1;
-        r1_addr = 1;
-        r2_addr = 1;
-        r3_addr = 1;
-        c0_addr = 1;
-        c1_addr = 1;
-        c2_addr = 1;
-        c3_addr = 1;
-
-        #2
-        r0_addr = 0;
-        r1_addr = 0;
-        r2_addr = 0;
-        r3_addr = 0;
-        c0_addr = 0;
-        c1_addr = 0;
-        c2_addr = 0;
-        c3_addr = 0;
-
-        
+        rst = 1;
+        #RESET_DURATION
+        rst = 0;
     end
 
-    initial begin
-
-
-    end
-
-
-endmodule: memsim
+endmodule: controller_tb
