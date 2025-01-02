@@ -1,5 +1,6 @@
 module MMU(
     input logic clk,
+    input logic en,
     input logic rst
 );  
     localparam Q = 0;
@@ -12,6 +13,7 @@ module MMU(
     controller #(.M(M)) controller_inst (
         .clk(clk),
         .rst(rst),
+        .en(en),
         .done(done),
         .enable_next(enable_next),
         .addr(addr)

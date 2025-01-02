@@ -11,6 +11,7 @@ module controller #(
 (
     input logic clk,
     input logic rst,
+    input logic en,
     // input logic next_addr,
     output logic [$clog2(M) - 1:0] addr,
     output logic done,
@@ -27,7 +28,7 @@ module controller #(
 
             case (state)
                 `init: begin
-                    state <= `next_addr;
+                    state <= en ? `next_addr : `init;
                     i <= 0;
                 end
                 `next_addr: begin

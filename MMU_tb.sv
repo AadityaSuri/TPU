@@ -3,11 +3,13 @@
 module MMU_tb();
 
     parameter CLK_PERIOD = 10;
+    parameter RUN_DURATION = 10;
 
-    logic clk, rst;
+    logic clk, rst, en;
 
     MMU dut (
         .clk(clk),
+        .en(en),
         .rst(rst)
     );
 
@@ -27,8 +29,24 @@ module MMU_tb();
         $readmemh("bc3.memh", dut.bc3_mem.altsyncram_component.m_default.altsyncram_inst.mem_data);
 
         rst = 1;
-        #10
+        #RUN_DURATION
         rst = 0;
+
+        en = 0;
+        #RUN_DURATION
+        en = 1;
+        #RUN_DURATION
+        en = 0;
+
+        #220
+
+        rst = 1;
+        #RUN_DURATION
+        rst = 0;
+
+        // rst = 1;
+        // #RUN_DURATION
+        // rst = 0;
     end
 
 endmodule: MMU_tb
