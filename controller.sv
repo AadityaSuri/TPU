@@ -56,23 +56,23 @@ module controller #(
             end
             `done: begin
                 done = 1;
-                enable_next = 0;
-                addr = i;
+                enable_next = 1;
+                addr = M - i - 1;
             end
             `next_addr: begin
                 done = 0;
                 enable_next = 0;
-                addr = i;
+                addr = M - i - 1;
             end
             `wait: begin
                 done = 0;
                 enable_next = 0;
-                addr = i;
+                addr = M - i - 1;
             end
             `enable_next: begin
                 done = 0;
                 enable_next = 1;
-                addr = i;
+                addr = M - i - 1;
             end
             default: begin
                 done = 0;
